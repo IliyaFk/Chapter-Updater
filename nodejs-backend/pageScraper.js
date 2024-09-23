@@ -3,15 +3,15 @@ const cheerio = require('cheerio');
 const axios = require('axios');
 
 const scraperObject = {
-    async scraper(browser, mangaName) {
-        const page = await browser.newPage();
+    async scraper(mangaName) {
         const url = `https://mangafire.to/filter?keyword=${encodeURIComponent(mangaName)}`;
         console.log(`Navigating to ${url}...`);
-        await page.goto(url);
 
         // Scraping logic
-        const content = await page.content();
-        const $ = cheerio.load(content);
+		console.log(url);
+		const { data } = await axios.get(url);
+
+        const $ = cheerio.load(data);
 
 		const results = [];
 		$('div.inner').each((i, elem) => {
@@ -25,7 +25,6 @@ const scraperObject = {
 		//Which will prompt user with the first 3 search results
 		//And ask which one is right, then it will navigate to that page and scrape the data from that page
 		const newUrl = 'https://mangafire.to'+results[0]
-		//await page.goto(newUrl);
 
 		const response  = await axios.get(newUrl);
 
@@ -38,7 +37,6 @@ const scraperObject = {
 			chapters.push({chapterInfo,chapterLink});
 		});
 
-        await page.close(); // Close the page after scraping
         return chapters; // Return the scraped chapters
     }
 };
