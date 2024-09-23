@@ -1,23 +1,18 @@
-//webName takes manga name defined by user from index.js
-var webName = require('./index.js');
-const axios = require('axios');
+const puppeteer = require('puppeteer');
 const cheerio = require('cheerio');
-const express = require('express');
-const cors = require("cors");
-const app = express();
+const axios = require('axios');
+
 const scraperObject = {
-	url: 'https://mangafire.to/filter?keyword='+webName.mangaName,
-	async scraper(browser){
-		//let page = await browser.newPage();
-		console.log(`Navigating to ${this.url}...`);
-		//await page.goto(this.url);
+    async scraper(browser, mangaName) {
+        const page = await browser.newPage();
+        const url = `https://mangafire.to/filter?keyword=${encodeURIComponent(mangaName)}`;
+        console.log(`Navigating to ${url}...`);
+        await page.goto(url);
 
-		const { data } = await axios.get(this.url);
+        // Scraping logic
+        const content = await page.content();
+        const $ = cheerio.load(content);
 
-		const $ = cheerio.load(data);
-
-		//Get all the manga links from the first page
-		//Can modify this to also get the thumbnails of the mangas later to show user
 		const results = [];
 		$('div.inner').each((i, elem) => {
 			const link = $(elem).find('a').attr('href');
@@ -40,34 +35,12 @@ const scraperObject = {
 		$i('li.item').each((j, elems) => {
 			const chapterInfo = $(elems).find('span').text();
 			const chapterLink = $(elems).find('a').attr('href');
-			chapters.push([chapterInfo,chapterLink]);
+			chapters.push({chapterInfo,chapterLink});
 		});
-		console.log(chapters[0]);
-		//chapters list contains all chapter names and release dates
 
-		//Sends chapter info to server
-		app.use(cors());
-		app.use(express.json());
+        await page.close(); // Close the page after scraping
+        return chapters; // Return the scraped chapters
+    }
+};
 
-		app.get("/message", (req, res) => {
-			res.json({ message: chapters });
-  		});
-  
- 		app.listen(8000, () => {
-			console.log(`Server is running on port 8000.`);
- 		});
-
-	}
-}
-
-// app.use(cors());
-// app.use(express.json());
-
-// app.get("/message", (req, res) => {
-// 	res.json({ message: chapters });
-//   });
-  
-//  app.listen(8000, () => {
-// 	console.log(`Server is running on port 8000.`);
-//  });
-module.exports = scraperObject;
+module.exports = scraperObject; // Ensure this line is correct

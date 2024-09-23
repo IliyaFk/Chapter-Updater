@@ -1,24 +1,40 @@
-import { Button, createMuiTheme, Grid, ThemeProvider, Typography, Box } from '@material-ui/core';
+import { Button, createTheme, Grid, ThemeProvider, Typography, Box, TextField } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import { useMemo, useState, useEffect } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import "./App.css";
+
+// Define the shape of the message array elements
+interface Chapter {
+  chapterInfo: string;
+  chapterLink: string;
+}
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
 
-  const [uuid, setUuid] = useState('00000000-0000-0000-0000-000000000000');
-  const [message, setMessage] = useState("");
+  // State to hold user input and fetched data
+  const [mangaName, setMangaName] = useState<string>('');
+  const [message, setMessage] = useState<Chapter[]>([]);
 
-  useEffect(() => {
-    fetch("http://localhost:8000/message")
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault(); // Prevent default form submission
+
+    // Fetch data from the backend using the user input (mangaName)
+    fetch(`http://localhost:8000/message`, {
+      method: 'POST', // Assuming your backend is set to accept POST requests
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ mangaName }), // Send mangaName to the backend
+    })
       .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-  }, []);
+      .then((data) => setMessage(data.message || [])) // Ensure data is an array
+      .catch((err) => console.error("Error fetching message:", err));
+  };
 
   const theme = useMemo(
     () =>
-      createMuiTheme({
+      createTheme({
         palette: {
           type: prefersDarkMode ? 'dark' : 'light',
         },
@@ -36,37 +52,46 @@ function App() {
     [prefersDarkMode]
   );
 
-  const generateUuid = () => {
-    setUuid(uuidv4());
-  };
-
   return (
-    // <ThemeProvider theme={theme}>
-    //   <CssBaseline />
-    //   <Box component='main' padding={2} display='flex'>
-    //     <Grid container direction='column' justify='center' alignItems='center' spacing={2}>
-    //       <Grid item>
-    //         <Typography variant='h1'>UUID Generator</Typography>
-    //       </Grid>
+    <ThemeProvider theme={theme}>
+      <Box component='main' padding={2} display='flex'>
+        <Grid container direction='column' justifyContent='center' alignItems='center' spacing={2}>
+          <Grid item>
+            <Typography variant='h1'>Manga Chapters Fetcher</Typography>
+          </Grid>
 
-    //       <Grid item>
-    //         <Typography variant='body1' style={{ userSelect: 'all' }}>
-    //           {uuid}
-    //         </Typography>
-    //       </Grid>
+          {/* Form to get user input */}
+          <Grid item>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                multiline inputProps={{ style: { color: "black" } }}
+                label="Enter Manga Name"
+                variant="outlined"
+                value={mangaName}
+                onChange={(e) => setMangaName(e.target.value)} // Update state as user types
+                required
+              />
+              <Button type="submit" variant="contained" color="primary">
+                Fetch Chapters
+              </Button>
+            </form>
+          </Grid>
 
-          <div className="App">
-            <h1>{message[0]}</h1>
-          </div>
-          
-          /* <Grid item>
-            <Button onClick={generateUuid} variant='contained' color='primary'>
-              Generate new UUID
-            </Button>
+          {/* Display fetched data */}
+          <Grid item>
+            {message.length > 0 ? (
+              message.map((chapter, index) => (
+                <Typography key={index} variant='body1'>
+                  {chapter.chapterInfo} - <a href={`https://mangafire.to${chapter.chapterLink}`} target="_blank" rel="noopener noreferrer">Read</a>
+                </Typography>
+              ))
+            ) : (
+              <Typography variant='body1'>No data available</Typography>
+            )}
           </Grid>
         </Grid>
       </Box>
-    </ThemeProvider> */
+    </ThemeProvider>
   );
 }
 
