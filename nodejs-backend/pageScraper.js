@@ -8,7 +8,6 @@ const scraperObject = {
         console.log(`Navigating to ${url}...`);
 
         // Scraping logic
-		console.log(url);
 		const { data } = await axios.get(url);
 
         const $ = cheerio.load(data);
@@ -41,4 +40,4 @@ const scraperObject = {
     }
 };
 
-module.exports = scraperObject; // Ensure this line is correct
+module.exports = scraperObject; 
