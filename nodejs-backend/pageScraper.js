@@ -3,11 +3,10 @@ const cheerio = require('cheerio');
 const axios = require('axios');
 
 const scraperObject = {
-    async scraper(mangaName) {
-        const url = `https://mangafire.to/filter?keyword=${encodeURIComponent(mangaName)}`;
-        console.log(`Navigating to ${url}...`);
-
-        // Scraping logic
+	
+	async search(mangaName){
+		//Fucntion to add manga search fucntionality
+		const url = `https://mangafire.to/filter?keyword=${encodeURIComponent(mangaName)}`;
 		const { data } = await axios.get(url);
 
         const $ = cheerio.load(data);
@@ -15,22 +14,23 @@ const scraperObject = {
 		const results = [];
 		$('div.inner').each((i, elem) => {
 			const link = $(elem).find('a').attr('href');
-			results.push(link);
+			const image = $(elem).find('img').attr('src');
+			results.push({image,link});
 		});
 
-		//Right now this goes to the first search result immediatly
-		//In future backend will not navigate to these pages
-		//It will only feed this info to React frontend
-		//Which will prompt user with the first 3 search results
-		//And ask which one is right, then it will navigate to that page and scrape the data from that page
-		const newUrl = 'https://mangafire.to'+results[0]
+		return results; 
+	},
+
+
+
+    async scraper(newUrl) {
 
 		const response  = await axios.get(newUrl);
 
-		const $i = cheerio.load(response.data);
+		const $ = cheerio.load(response.data);
 
 		const chapters = [];
-		$i('li.item').each((j, elems) => {
+		$('li.item').each((j, elems) => {
 			const chapterInfo = $(elems).find('span').text();
 			const chapterLink = $(elems).find('a').attr('href');
 			chapters.push({chapterInfo,chapterLink});
