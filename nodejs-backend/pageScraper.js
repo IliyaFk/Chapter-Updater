@@ -15,7 +15,8 @@ const scraperObject = {
 		$('div.inner').each((i, elem) => {
 			const link = $(elem).find('a').attr('href');
 			const image = $(elem).find('img').attr('src');
-			results.push({image,link});
+			const title = $(elem).find('a:nth-child(2)').first().text();
+			results.push({image,link,title});
 		});
 
 		return results; 

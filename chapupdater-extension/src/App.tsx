@@ -6,6 +6,7 @@ import { useMemo, useState, useEffect } from 'react';
 interface Manga {
   image: string;
   link: string;
+  title: string;
 }
 
 interface Chapter {
@@ -121,7 +122,7 @@ function App() {
                          )}
                     <Typography variant='body1'>
                       <Button onClick={() =>  {console.log(mangaResults); handleMangaSelection(manga.link)}} variant='contained' color='secondary' style={{ marginLeft: '10px' }}>
-                        Select
+                        {manga.title}
                       </Button>
                     </Typography>
                   </div>
