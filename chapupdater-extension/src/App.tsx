@@ -1,6 +1,8 @@
 import { Button, createTheme, Grid, ThemeProvider, Typography, Box, TextField } from '@material-ui/core';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useMemo, useState, useEffect } from 'react';
+import './App.css';
+import image from "./backgroundImage.jpg";
 
 // Define the shape of the manga and chapter data
 interface Manga {
@@ -89,7 +91,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box component='main' padding={2} display='flex'>
+      <Box component='main' padding={2} display='flex' style={{backgroundImage: `url(${image})`}} className = "background"> {/*Need to work on background, maybe dont put it here */}
         <Grid container direction='column' justifyContent='center' alignItems='center' spacing={2}>
           <Grid item>
             <Typography variant='h1'>Manga Search</Typography>
@@ -114,17 +116,19 @@ function App() {
               <div>
                 <Typography variant='h2'>Search Results:</Typography>
                 {mangaResults.map((manga, index) => (
-                  <div key={index}>
+                  <div >
+                    <div className="container" key={index} >
                         {manga.image ? (
-                          <img src={manga.image} style={{ width: '200px' }} />
+                          <img src={manga.image} alt={manga.title} style={{ width: '200px' }} />
                         ) : (
                           <Typography variant="body1">Image not available</Typography>
                          )}
-                    <Typography variant='body1'>
-                      <Button onClick={() =>  {console.log(mangaResults); handleMangaSelection(manga.link)}} variant='contained' color='secondary' style={{ marginLeft: '10px' }}>
+                    <Typography variant='body1' className = "container">
+                      <Button className="button" onClick={() =>  {handleMangaSelection(manga.link)}} variant='contained' color='secondary' style={{ marginLeft: '10px' }}>
                         {manga.title}
                       </Button>
                     </Typography>
+                  </div>
                   </div>
                 ))}
               </div>

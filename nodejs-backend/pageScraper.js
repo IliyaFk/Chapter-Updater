@@ -19,6 +19,8 @@ const scraperObject = {
 			results.push({image,link,title});
 		});
 
+		results.pop() //Removes last element of results as that is website logo
+
 		return results; 
 	},
 
