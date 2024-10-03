@@ -3,10 +3,6 @@
   text-align: center;
 }
 
-.textfield {
-  background-color: #000;
-  color: green;
-}
 
 .container {
   display: flex;
@@ -20,6 +16,19 @@
 }
 
 .background {
-  background-size: cover;
-  background-repeat: no-repeat ;
+  background-color: #1c1c1c;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #1f2023;
+    color: #dadada;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #1f2023;
+  }
 }

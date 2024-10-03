@@ -18,6 +18,7 @@ interface Chapter {
 
 function App() {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+  console.log(prefersDarkMode);
   const [searchQuery, setSearchQuery] = useState<string>(''); // Input for manga search
   const [mangaResults, setMangaResults] = useState<Manga[]>([]); // List of manga search results
   const [selectedManga, setSelectedManga] = useState<string | null>(null); // Selected manga URL
@@ -91,7 +92,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box component='main' padding={2} display='flex' style={{backgroundImage: `url(${image})`}} className = "background"> {/*Need to work on background, maybe dont put it here */}
+      <Box component='main' padding={2} display='flex'> 
         <Grid container direction='column' justifyContent='center' alignItems='center' spacing={2}>
           <Grid item>
             <Typography variant='h1'>Manga Search</Typography>
@@ -99,7 +100,6 @@ function App() {
 
           <Grid item>
             <TextField
-            multiline inputProps={{ style: { color: "black" } }}
               label="Search Manga"
               variant="outlined"
               value={searchQuery}
