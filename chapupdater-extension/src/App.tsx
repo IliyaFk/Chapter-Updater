@@ -111,8 +111,10 @@ function App() {
           </Grid>
 
           {/* Show manga search results */}
+
+          {showResults &&
           <Grid item>
-            {showResults && mangaResults.length > 0 ? (
+            {mangaResults.length > 0 ? (
               <div>
                 <Typography variant='h2'>Search Results:</Typography>
                 {mangaResults.map((manga, index) => (
@@ -136,8 +138,11 @@ function App() {
               <Typography variant='body1'>No manga found</Typography>
             )}
           </Grid>
+        }
+
 
           {/* Show selected manga's chapter information */}
+          {!showResults &&
           <Grid item>
             {!showResults && selectedManga && chapterInfo.length > 0 ? (
               <div>
@@ -152,6 +157,7 @@ function App() {
               <Typography variant='body1'>No chapters found for the selected manga</Typography>
             ) : null}
           </Grid>
+          }
 
           {/* Show error if any */}
           {error && (
